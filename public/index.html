@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload to Dropbox</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    form {
+      margin: 20px auto;
+      width: 300px;
+    }
+    input[type="file"] {
+      margin-bottom: 15px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .message {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Upload File to Dropbox</h1>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="file" id="file" required />
+    <br />
+    <button type="submit">Upload</button>
+  </form>
+  <div class="message" id="message"></div>
+
+  <script>
+    const form = document.getElementById("uploadForm");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fileInput = document.getElementById("file");
+      if (!fileInput.files.length) {
+        alert("Please select a file!");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", fileInput.files[0]);
+
+      try {
+        const response = await fetch("/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (response.ok) {
+          message.textContent = "File uploaded successfully!";
+          message.style.color = "green";
+        } else {
+          message.textContent = "Failed to upload file!";
+          message.style.color = "red";
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        message.textContent = "Error uploading file.";
+        message.style.color = "red";
+      }
+    });
+  </script>
+</body>
+</html>
